@@ -1,16 +1,30 @@
 package hellojava.hellojavaspring.service;
 
 import hellojava.hellojavaspring.domain.Member;
-import org.assertj.core.api.Assertions;
+import hellojava.hellojavaspring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.server.ExportException;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberServiceTest {
 
-    MemberService memberService= new MemberService();
+    MemberService memberService; //맴버 서비스
+    MemoryMemberRepository memoryMemberRepository;
+
+    @BeforeEach
+    public void beforEach(){
+        memoryMemberRepository= new MemoryMemberRepository();
+        memberService= new MemberService(memoryMemberRepository);
+
+    }
+
+    @AfterEach
+    public void afterEach(){
+        memoryMemberRepository.clearStroe();
+    }
 
 
     @Test
@@ -28,7 +42,7 @@ class MemberServiceTest {
         member1.setName("hello");
 
         Member finMember =memberService.findone(saveid).get();
-        Assertions.assertThat(member.getName()).isEqualTo(finMember.getName());
+        assertThat(member.getName()).isEqualTo(finMember.getName());
         var saveid1 = memberService.join(member1); //기존의 값이 있다면 , 오류가 날껍니다.
         //then : 그리고나왓던 결과물
 
@@ -46,15 +60,19 @@ class MemberServiceTest {
         member1.setName("spring");
 
         memberService.join(member1);
-        try
-        {
-           memberService.join(member2);
-          fail();
-        }
-        catch(IllegalStateException e)
-        {
-            int i=0;
-        }
+       // IllegalStateException e =assertThrows(IllegalStateException.class, ()-> memberService.join(member2)); //예외 발생 시킴
+//        assertThat(e.getMessage()).isEqualTo("이미 있는 회원입니다"); //입력된 두개의 파라미터 비교값이
+
+//        try
+//        {
+//           memberService.join(member2);
+//          fail();
+//        }
+//        catch(IllegalStateException e)
+//        {
+//            int i=0;
+//        }
+        int i=0;
     }
 
     @Test

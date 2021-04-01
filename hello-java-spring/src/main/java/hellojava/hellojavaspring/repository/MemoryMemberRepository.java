@@ -1,11 +1,14 @@
 package hellojava.hellojavaspring.repository;
 
 import hellojava.hellojavaspring.domain.Member;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+
 public class MemoryMemberRepository implements MemberRepository {
-    private static Map<Long, Member> store = new HashMap<>();
+    private static Map<Long, Member> store = new HashMap<>(); //인스턴스와는 상관없이 class 단위에 붙습니다
+
     private static long sequence = 0l;
 
     @Override

@@ -2,15 +2,25 @@ package hellojava.hellojavaspring.service;
 
 import hellojava.hellojavaspring.domain.Member;
 import hellojava.hellojavaspring.repository.MemberRepository;
-import hellojava.hellojavaspring.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
+//순수한 자바 code
 public class MemberService {
 
     //여기에 들어갈기능 , 회원가입
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final MemberRepository memberRepository;
+
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
 
     public Long join(Member member) {
 //        //같은 이름이 있는 중복 회원은 안됩니다.
