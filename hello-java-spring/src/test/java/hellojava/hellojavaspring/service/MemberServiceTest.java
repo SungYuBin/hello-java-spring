@@ -9,77 +9,41 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MemberServiceTest {
-
-    MemberService memberService; //맴버 서비스
-    MemoryMemberRepository memoryMemberRepository;
-
+class MemberServiceTest
+{
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
     @BeforeEach
-    public void beforEach(){
-        memoryMemberRepository= new MemoryMemberRepository();
-        memberService= new MemberService(memoryMemberRepository);
-
+    public void beforeEach() {
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
     }
-
     @AfterEach
-    public void afterEach(){
-        memoryMemberRepository.clearStroe();
+    public void afterEach() {
+        memberRepository.clearStore();
     }
-
-
     @Test
-    void join() {
-        //given : 무언가가 주어졌을때
+    public void 회원가입() throws Exception {
+//Given
         Member member = new Member();
         member.setName("hello");
-
-        //when : 어떤행동을
-        var saveid = memberService.join(member); //기존의 값이 있다면 , 오류가 날껍니다.
-        //기존에 값이 있었는지 검사를 합니다, 만약에 있던값이 들어가게 되면 어쩌죠...?
-
-
-        Member member1 = new Member();
-        member1.setName("hello");
-
-        Member finMember =memberService.findone(saveid).get();
-        assertThat(member.getName()).isEqualTo(finMember.getName());
-        var saveid1 = memberService.join(member1); //기존의 값이 있다면 , 오류가 날껍니다.
-        //then : 그리고나왓던 결과물
-
-        int i=0;
-
+//When
+        Long saveId = memberService.join(member);
+//Then
+        Member findMember = memberRepository.findById(saveId).get();
+        assertEquals(member.getName(), findMember.getName());
     }
-
     @Test
-    public void 중복_회원_예외_테스트()
-    {
+    public void 중복_회원_예외() throws Exception {
+//Given
         Member member1 = new Member();
         member1.setName("spring");
-
         Member member2 = new Member();
-        member1.setName("spring");
-
+        member2.setName("spring");
+//When
         memberService.join(member1);
-       // IllegalStateException e =assertThrows(IllegalStateException.class, ()-> memberService.join(member2)); //예외 발생 시킴
-//        assertThat(e.getMessage()).isEqualTo("이미 있는 회원입니다"); //입력된 두개의 파라미터 비교값이
-
-//        try
-//        {
-//           memberService.join(member2);
-//          fail();
-//        }
-//        catch(IllegalStateException e)
-//        {
-//            int i=0;
-//        }
-        int i=0;
-    }
-
-    @Test
-    void findMembers() {
-    }
-
-    @Test
-    void findone() {
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> memberService.join(member2));//예외가 발생해야 한다.
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
     }
 }

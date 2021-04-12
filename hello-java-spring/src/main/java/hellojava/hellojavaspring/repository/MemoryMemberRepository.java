@@ -5,41 +5,32 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-
-public class MemoryMemberRepository implements MemberRepository {
-    private static Map<Long, Member> store = new HashMap<>(); //인스턴스와는 상관없이 class 단위에 붙습니다
-
-    private static long sequence = 0l;
-
+@Repository
+public class MemoryMemberRepository implements MemberRepository
+{
+    private static Map<Long, Member> store = new HashMap<>();
+    private static long sequence = 0L;
     @Override
-    public Member Save(Member value) {
-        value.setId(++sequence);
-        store.put(value.getId(), value); //add 나 insert 가 아니라 put 입니다.
-        return value;
+    public Member save(Member member) {
+        member.setId(++sequence);
+        store.put(member.getId(), member);
+        return member;
     }
-
     @Override
     public Optional<Member> findById(Long id) {
-        return Optional.ofNullable(store.get(id)); //Optional은 null인지 값을 검사해주는겁니다.
+        return Optional.ofNullable(store.get(id));
     }
-
-    @Override
-    public Optional<Member> findByName(String name) {
-        return Optional.empty();
-    }
-
-    //자바에서 실무할때는 list를 많이 씁니다
     @Override
     public List<Member> findAll() {
         return new ArrayList<>(store.values());
     }
-
     @Override
-    public int Count() {
-        return store.size();
+    public Optional<Member> findByName(String name) {
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny();
     }
-
-    public void clearStroe() {
+    public void clearStore() {
         store.clear();
     }
 
